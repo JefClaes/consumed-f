@@ -31,4 +31,7 @@ module Handling =
             Success ( Consumed(id, description, url) )
         | Command.Remove ( id ) ->
             Success ( Removed(id) )
+
+    let handleInPipeline cmd = cmd |> validate >>= switch handle
+
          

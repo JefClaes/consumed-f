@@ -17,7 +17,7 @@ module program =
             match parse argv with
             | Success(Command(cmd)) -> 
             (
-                match cmd |> validate >>= handle with
+                match handleInPipeline cmd with
                 | Success e -> printfn "Yay! Something happened = %A" e
                 | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x   
                 | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
