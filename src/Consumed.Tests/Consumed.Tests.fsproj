@@ -49,9 +49,10 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <Compile Include="Library1.fs" />
+    <Compile Include="ParsingTests.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+    <Compile Include="ValidationTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FsUnit.NUnit">

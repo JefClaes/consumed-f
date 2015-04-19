@@ -27,8 +27,8 @@ module program =
                 | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x   
                 | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
             )  
-            | Success(Query(qry)) -> printfn "Query not implemented"     
-            | Failure ArgumentsMissing -> printfn "Arguments missing, expecting at least two"
+            | Success(Query(qry)) -> printfn "Query not implemented."     
+            | Failure ArgumentsMissing -> printfn "Arguments missing. Expecting at least two arguments."
             | Failure NotFound -> printfn "Could not find command or query. Check arguments."
             | Failure(KeyLooksLikeValue k) -> printfn "Key %s looks like a value" k
             | Failure(KeyMissing k) -> printfn "Key %s missing" k

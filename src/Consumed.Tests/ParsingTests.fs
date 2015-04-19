@@ -1,4 +1,4 @@
-﻿module Tests
+﻿module ParsingTests
 
 open Consumed.Railway
 open Consumed.CLIParsing

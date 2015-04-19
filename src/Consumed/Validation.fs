@@ -17,7 +17,7 @@ module Validation =
                 if id = "" then Failure(ArgumentEmpty("id"))
                 else if description = "" then Failure(ArgumentEmpty("description"))
                 else if url = "" then Failure(ArgumentEmpty("url"))
-                else if not ( url.Contains(@"http://") ) then Failure(ArgumentStructure("url"))
+                else if not ( url.Contains("http://") || url.Contains("https://") ) then Failure(ArgumentStructure("url"))
                 else Success cmd
             )
         | Remove id -> 
