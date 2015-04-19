@@ -2,9 +2,9 @@
 // See the 'F# Tutorial' project for more help.
 namespace Consumed
 
+open Contracts
 open CLIParsing
 open Railway
-open Validation
 open Handling
 
 module program =
@@ -12,18 +12,13 @@ module program =
     [<EntryPoint>]
     let main argv = 
         printfn "%A" argv
-
+        
         let exec() = 
             match parse argv with
             | Success(Command(cmd)) -> 
             (
-                let validationResult = ( cmd |> validateCommand )
-                match validationResult with
-                | Success(cmd) -> 
-                (
-                    printfn "Command validated = %A" cmd
-                  
-                )                
+                match cmd |> validate >>= handle with
+                | Success e -> printfn "Yay! Something happened = %A" e
                 | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x   
                 | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
             )  

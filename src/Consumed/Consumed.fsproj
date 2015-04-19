@@ -51,7 +51,6 @@
     <Compile Include="Railway.fs" />
     <Compile Include="CLIParsing.fs" />
     <None Include="App.config" />
-    <Compile Include="Validation.fs" />
     <Compile Include="Handling.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
