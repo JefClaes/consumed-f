@@ -1,6 +1,6 @@
 ﻿namespace Consumed
 
-open Commands
+open Contracts
 open Railway
 
 module CLIParsing =
@@ -9,7 +9,11 @@ module CLIParsing =
         | ArgumentsMissing 
         | KeyMissing of string
         | KeyLooksLikeValue of string
-        | CommandNotFound
+        | NotFound
+
+    type ParseResult =
+        | Command of Command
+        | Query of Query
        
     let parse input =
         let ensureEnoughElements input =
@@ -39,15 +43,15 @@ module CLIParsing =
             | true -> Success arguments
             | false -> Failure(KeyMissing key)
 
-        let toCommand arguments =
+        let toCommandOrQuery arguments =
             match arguments |> Seq.toList with
             | [ ( "n", "consume" ); ("id", id ); ( "d", description ); ( "u", url ) ] ->
-                Success(Consume(id, description, url))
+                Success(Command(Consume(id, description, url)))
             | [ ( "n", "remove" ); ( "id" , id ) ] ->
-                Success(Remove(id))
+                Success(Command(Remove(id)))
             | [ ( "n", "list" )] ->
-                Success(List)
-            | _ -> Failure CommandNotFound 
+                Success(Query(List))
+            | _ -> Failure NotFound 
               
         input 
             |> ensureEnoughElements
@@ -55,5 +59,5 @@ module CLIParsing =
             >>= ensureKeysDontLookLikeValue
             >>= switch stripKeys
             >>= ensureKeyExists "n"
-            >>= toCommand
+            >>= toCommandOrQuery
 
