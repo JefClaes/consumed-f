@@ -3,12 +3,12 @@
 module Contracts =
 
     type Command =
-        | Consume of id : string * description : string * url : string
+        | Consume of id : string * category : string * description : string * url : string
         | Remove of id : string
 
     type Query =
         | List
 
     type Event =
-        | Consumed of id : string * description : string * url : string
+        | Consumed of id : string * category : string * description : string * url : string
         | Removed of id : string

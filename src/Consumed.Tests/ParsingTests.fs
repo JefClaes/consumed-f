@@ -14,19 +14,19 @@ let ``Parsing without arguments fails w ArgumentsMissing``() =
 
 [<Test>]
 let ``Parsing with an extra key ignores the key``() = 
-    let expected = Consume("1", "The Dark Tower", "http://thedarktower.com")
-    let actual = parse [| "--n"; "consume"; "--id"; "1"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; "--z" |]
+    let expected = Consume("1", "book", "The Dark Tower", "http://thedarktower.com")
+    let actual = parse [| "--n"; "consume"; "--id"; "1"; "--c"; "book";  "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; "--z" |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
     | _ -> Assert.Fail()
       
 [<Test>]
 let ``Parsing consume command``() =  
-    let expected = Consume("2", "The Dark Tower", "http://thedarktower.com")
-    let actual = parse [| "--n"; "consume"; "--id"; "2"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; |]
+    let expected = Consume("2", "book", "The Dark Tower", "http://thedarktower.com")
+    let actual = parse [| "--n"; "consume"; "--id"; "2"; "--c"; "book"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
-    | _ -> Assert.Fail() 
+    | _ -> Assert.Fail(actual.ToString()) 
 
 [<Test>]
 let ``Parsing remove command``() =  
@@ -35,7 +35,7 @@ let ``Parsing remove command``() =
     let actual = parse [| "--n"; "remove"; "--id"; id |]
     match actual with
     | Success(Command(s)) -> s |> should equal expected
-    | _ -> Assert.Fail() 
+    | _ -> Assert.Fail(actual.ToString()) 
 
 [<Test>]
 let ``Parsing list query``() =  
@@ -43,14 +43,14 @@ let ``Parsing list query``() =
     let actual = parse [| "--n"; "list"; |]
     match actual with
     | Success(Query(s)) -> s |> should equal expected
-    | _ -> Assert.Fail() 
+    | _ -> Assert.Fail(actual.ToString()) 
 
     
 [<Test>]
 let ``Parsing when command not found fails w CommandNotFound``() =  
     match parse [| "--n"; "i_do_not_exist"; |] with
     | Failure(ParserFailure.NotFound) -> Assert.Pass()
-    | _ -> Assert.Fail()
+    | _ -> Assert.Fail() 
 
 [<Test>]
 let ``Parsing when command looks like value fails w KeyLooksLikeValue``() =  

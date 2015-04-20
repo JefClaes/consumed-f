@@ -21,6 +21,7 @@ module program =
                 | Success e -> printfn "Yay! Something happened = %A" e
                 | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x   
                 | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
+                | Failure(ArgumentOutOfRange x) -> printfn "Argument out of range = %A" x
             )  
             | Success(Query(qry)) -> printfn "Query not implemented."     
             | Failure ArgumentsMissing -> printfn "Arguments missing. Expecting at least two arguments."
