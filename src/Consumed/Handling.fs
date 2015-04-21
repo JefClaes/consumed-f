@@ -28,14 +28,16 @@ module Handling =
                 if id = "" then Failure(ArgumentEmpty("id"))
                 else Success cmd
             )
+    
+    let thetime() = DateTime.UtcNow
 
-    let handle cmd =       
+    let handle thetime cmd =       
         match cmd with
         | Command.Consume ( id, category, description, url ) ->
-            Success ( Consumed(id, category, description, url) )
+            Success ( Consumed( thetime(), id, category, description, url) )
         | Command.Remove ( id ) ->
-            Success ( Removed(id) )
+            Success ( Removed( thetime(), id) )        
 
-    let handleInPipeline cmd = cmd |> validate >>= switch handle
+    let handleInPipeline cmd = cmd |> validate >>= switch ( handle thetime )
 
          

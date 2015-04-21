@@ -53,6 +53,7 @@
     <None Include="packages.config" />
     <None Include="app.config" />
     <Compile Include="ValidationTests.fs" />
+    <Compile Include="HandlingTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FsUnit.NUnit">

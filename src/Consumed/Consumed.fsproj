@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts.fs" />
+    <Compile Include="EventStore.fs" />
     <Compile Include="Railway.fs" />
     <Compile Include="CLIParsing.fs" />
     <None Include="App.config" />

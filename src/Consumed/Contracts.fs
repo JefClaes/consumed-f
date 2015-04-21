@@ -1,5 +1,7 @@
 ﻿namespace Consumed 
 
+open System
+
 module Contracts =
 
     type Command =
@@ -10,5 +12,5 @@ module Contracts =
         | List
 
     type Event =
-        | Consumed of id : string * category : string * description : string * url : string
-        | Removed of id : string
+        | Consumed of timestamp : DateTime * id : string * category : string * description : string * url : string
+        | Removed of timestamp : DateTime * id : string
