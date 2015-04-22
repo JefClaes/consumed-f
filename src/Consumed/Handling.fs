@@ -3,6 +3,7 @@
 open System
 open Contracts
 open Railway
+open EventStore
 
 module Handling =
 
@@ -38,6 +39,6 @@ module Handling =
         | Command.Remove ( id ) ->
             Success ( Removed( thetime(), id) )        
 
-    let handleInPipeline cmd = cmd |> validate >>= switch ( handle thetime )
+    let handleInPipeline cmd = cmd |> validate >>= ( handle thetime ) >>= switch ( store "D:\store.txt" "stream" )
 
          

@@ -1,10 +1,20 @@
 ﻿namespace Consumed
 
-open Contracts
+open System
+open System.IO
+open Newtonsoft.Json
 
 module EventStore =
-    let store stream e =
+      
+    let store path stream e =
+        let serialize e = JsonConvert.SerializeObject e
 
-        match e with
-        | Consumed ( timestamp, id, category, description, url ) -> ()
-        | Removed ( timestamp, id ) -> ()
+        let writeToDisk ( line : string ) = 
+            use wr = new StreamWriter(path, true)
+            wr.WriteLine(line)
+
+        writeToDisk ( serialize e )
+
+        e
+
+      
