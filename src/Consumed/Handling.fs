@@ -5,12 +5,15 @@ open Contracts
 open Railway
 open EventStore
 
-module Handling =
-
+module Handling = 
+    
     type HandlingFailure =
-     | ArgumentEmpty of string
-     | ArgumentStructure of string    
-     | ArgumentOutOfRange of string
+        | ArgumentEmpty of string
+        | ArgumentStructure of string    
+        | ArgumentOutOfRange of string
+
+    type HandleResult =
+        | Event of stream : string * event : Event 
 
     let validate cmd =
         match cmd with
@@ -35,10 +38,22 @@ module Handling =
     let handle thetime cmd =       
         match cmd with
         | Command.Consume ( id, category, description, url ) ->
-            Success ( Consumed( thetime(), id, category, description, url) )
+            Success ( HandleResult.Event 
+                ( 
+                    sprintf "consumeditem/%s" id, 
+                    Consumed( thetime(), id, category, description, url) 
+                ))
         | Command.Remove ( id ) ->
-            Success ( Removed( thetime(), id) )        
+            Success ( HandleResult.Event
+                (
+                    sprintf "consumeditem/%s" id,
+                    Removed( thetime(), id ) 
+                ))        
+    
+    let sideEffects result =
+        match result with
+        | HandleResult.Event ( stream, event ) -> ( store "D:\store.txt" stream event )
 
-    let handleInPipeline cmd = cmd |> validate >>= ( handle thetime ) >>= switch ( store "D:\store.txt" "stream" )
+    let handleInPipeline cmd = cmd |> validate >>= ( handle thetime ) >>= switch sideEffects 
 
          
