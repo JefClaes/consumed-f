@@ -1,13 +1,14 @@
 ﻿namespace Consumed
 
 open System
+open Contracts
 open System.IO
 open Newtonsoft.Json
 open Railway
 
 module EventStore =
       
-    type EventOnDisk =  { Stream : string; Event : Object  }
+    type StoredEvent =  { Stream : string; Body : Event  }
 
     let store path stream e =
         let serialize e = JsonConvert.SerializeObject e
@@ -16,10 +17,22 @@ module EventStore =
             use wr = new StreamWriter(path, true)
             wr.WriteLine(line)       
         
-        let eventOnDisk = { Stream = stream; Event = e } 
+        let eventOnDisk = { Stream = stream; Body = e } 
 
         writeToDisk ( serialize eventOnDisk  )
 
         Success eventOnDisk
+
+    let read path stream =       
+        let deserialize x = JsonConvert.DeserializeObject<StoredEvent>(x)
+
+        let readFromDisk = File.ReadAllLines path
+
+        match stream with
+        | "$all" -> readFromDisk |> Seq.map deserialize
+        | _ -> raise (NotSupportedException("Only $all stream supported"))
+        
+
+            
 
       

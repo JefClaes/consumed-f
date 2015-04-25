@@ -7,15 +7,24 @@ open EventStore
 
 module Handling = 
     
-    type HandlingFailure =
+    type ValidationFailure =
         | ArgumentEmpty of string
         | ArgumentStructure of string    
         | ArgumentOutOfRange of string
-
-    type HandleResult =
+        
+    type CmdResult =
         | Event of stream : string * event : Event 
-
-    let validate cmd =
+    
+    type ConsumedItemReadModel = 
+        { 
+            Id : string; 
+            Timestamp : DateTime;
+            Category : string; 
+            Description: string; 
+            Url: string 
+        }
+     
+    let validateCommand cmd =
         match cmd with
         | Consume ( id, category, description, url ) -> 
             (
@@ -35,25 +44,40 @@ module Handling =
     
     let thetime() = DateTime.UtcNow
 
-    let handle thetime cmd =       
+    let handleCommand thetime cmd =       
         match cmd with
         | Command.Consume ( id, category, description, url ) ->
-            Success ( HandleResult.Event 
+            Success ( Event 
                 ( 
                     sprintf "consumeditem/%s" id, 
                     Consumed( thetime(), id, category, description, url) 
                 ))
         | Command.Remove ( id ) ->
-            Success ( HandleResult.Event
+            Success ( Event
                 (
                     sprintf "consumeditem/%s" id,
                     Removed( thetime(), id ) 
-                ))        
+                )) 
+                
+    let handleQuery read query =
+        match query with
+        | Query.List ->
+            (                  
+                let eventsFromStore = read "$all" 
+                let events = eventsFromStore |> Seq.map (fun e -> e.Body) 
+
+                let folder state x = 
+                    match x with
+                    | Event.Consumed ( timestamp, id, category, description, url ) -> 
+                       { Id = id; Timestamp = timestamp; Category = category; Description = description; Url = url } :: state
+                    | Event.Removed ( timestamp, id ) -> 
+                        List.filter (fun x -> x.Id <> id) state
+
+                let result = Seq.fold folder List.empty events
+
+                result
+            )     
     
-    let sideEffects result =
-        match result with
-        | HandleResult.Event ( stream, event ) -> ( store "D:\store.txt" stream event )
-
-    let handleInPipeline cmd = cmd |> validate >>= ( handle thetime ) >>= switch sideEffects 
-
-         
+    let commandSideEffects store input =
+        match input with
+        | Event ( stream, event ) -> ( store stream event )
