@@ -29,8 +29,3 @@ module EventStore =
         match stream with
         | "$all" -> readFromDisk |> Seq.map deserialize
         | _ -> raise (NotSupportedException("Only $all stream supported"))
-        
-
-            
-
-      
