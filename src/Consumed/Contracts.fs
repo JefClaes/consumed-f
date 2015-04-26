@@ -5,8 +5,10 @@ open System
 module Contracts =
 
     type Command =
-        | Consume of id : string * category : string * description : string * url : string
-        | Remove of id : string
+        | Consume of data : ConsumeData
+        | Remove of data : RemoveData
+    and ConsumeData =  { Id : string; Category : string; Description : string; Url : string }
+    and RemoveData = { Id : string; }
 
     type Query =
         | List

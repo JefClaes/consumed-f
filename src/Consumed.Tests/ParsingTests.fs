@@ -14,7 +14,7 @@ let ``Parsing without arguments fails w ArgumentsMissing``() =
 
 [<Test>]
 let ``Parsing with an extra key ignores the key``() = 
-    let expected = Consume("1", "book", "The Dark Tower", "http://thedarktower.com")
+    let expected = Consume { Id = "1"; Category = "book"; Description = "The Dark Tower"; Url = "http://thedarktower.com" }
     let actual = parse [| "--n"; "consume"; "--id"; "1"; "--c"; "book";  "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; "--z" |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
@@ -22,7 +22,7 @@ let ``Parsing with an extra key ignores the key``() =
       
 [<Test>]
 let ``Parsing consume command``() =  
-    let expected = Consume("2", "book", "The Dark Tower", "http://thedarktower.com")
+    let expected = Consume { Id = "2"; Category = "book"; Description = "The Dark Tower"; Url = "http://thedarktower.com" }
     let actual = parse [| "--n"; "consume"; "--id"; "2"; "--c"; "book"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
@@ -31,7 +31,7 @@ let ``Parsing consume command``() =
 [<Test>]
 let ``Parsing remove command``() =  
     let id = "1"
-    let expected = Remove(id)
+    let expected = Remove { Id = id }
     let actual = parse [| "--n"; "remove"; "--id"; id |]
     match actual with
     | Success(Command(s)) -> s |> should equal expected

@@ -16,19 +16,19 @@ module CommandHandling =
        
     let validateCommand cmd =
         match cmd with
-        | Consume ( id, category, description, url ) -> 
+        | Consume data -> 
             (
-                if id = "" then Failure(ArgumentEmpty("id"))
-                else if category = "" then Failure(ArgumentEmpty("category"))
-                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(category, StringComparison.OrdinalIgnoreCase) ) ) then Failure(ArgumentOutOfRange("category")) 
-                else if description = "" then Failure(ArgumentEmpty("description"))
-                else if url = "" then Failure(ArgumentEmpty("url"))
-                else if not ( url.Contains("http://") || url.Contains("https://") ) then Failure(ArgumentStructure("url"))
+                if data.Id = "" then Failure(ArgumentEmpty("id"))
+                else if data.Category = "" then Failure(ArgumentEmpty("category"))
+                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then Failure(ArgumentOutOfRange("category")) 
+                else if data.Description = "" then Failure(ArgumentEmpty("description"))
+                else if data.Url = "" then Failure(ArgumentEmpty("url"))
+                else if not ( data.Url.Contains("http://") || data.Url.Contains("https://") ) then Failure(ArgumentStructure("url"))
                 else Success cmd
             )
-        | Remove id -> 
+        | Remove data -> 
             (
-                if id = "" then Failure(ArgumentEmpty("id"))
+                if data.Id = "" then Failure(ArgumentEmpty("id"))
                 else Success cmd
             )
     
@@ -36,24 +36,24 @@ module CommandHandling =
 
     let handleCommand thetime cmd =       
         match cmd with
-        | Command.Consume ( id, category, description, url ) ->
+        | Command.Consume data ->
             Success ( Event 
                 ( 
-                    sprintf "consumeditem/%s" id, 
+                    sprintf "consumeditem/%s" data.Id, 
                     Consumed 
                         { 
                             Timestamp = thetime()
-                            Id = id;
-                            Category = category;
-                            Description = description;
-                            Url = url
+                            Id = data.Id;
+                            Category = data.Category;
+                            Description = data.Description;
+                            Url = data.Url
                         } 
                 ))
-        | Command.Remove ( id ) ->
+        | Command.Remove data ->
             Success ( Event
                 (
-                    sprintf "consumeditem/%s" id,
-                    Removed { Timestamp = thetime(); Id = id } 
+                    sprintf "consumeditem/%s" data.Id,
+                    Removed { Timestamp = thetime(); Id = data.Id } 
                 ))                
   
     let handleCommandSideEffects store input =
