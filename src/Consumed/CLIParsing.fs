@@ -30,16 +30,16 @@ module CLIParsing =
         let ensureKeysDontLookLikeValue ( arguments : seq<string * string> ) =
             let looksLikeValue = 
                 arguments 
-                |> Seq.tryFind ( fun ( k, v ) -> not (k.StartsWith("-") || k.StartsWith("--")) )
+                |> Seq.tryFind ( fun ( k, _ ) -> not (k.StartsWith("-") || k.StartsWith("--")) )
             match looksLikeValue with
-            | Some ( key, value ) -> Failure(KeyLooksLikeValue key)
+            | Some ( key, _ ) -> Failure(KeyLooksLikeValue key)
             | None -> Success arguments            
 
         let stripKeys ( arguments : seq<string * string> ) =        
             arguments |> Seq.map (fun ( k, v ) -> ( k.Replace("-", "").ToLower(), v ))
     
         let ensureKeyExists key arguments =      
-            match arguments |> Seq.exists (fun ( k, v ) -> k = key ) with
+            match arguments |> Seq.exists (fun ( k, _ ) -> k = key ) with
             | true -> Success arguments
             | false -> Failure(KeyMissing key)
 
