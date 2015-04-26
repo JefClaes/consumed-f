@@ -57,7 +57,8 @@
     <Compile Include="EventStore.fs" />
     <Compile Include="CLIParsing.fs" />
     <None Include="App.config" />
-    <Compile Include="Handling.fs" />
+    <Compile Include="CommandHandling.fs" />
+    <Compile Include="QueryHandling.fs" />
     <Compile Include="Program.fs" />
     <None Include="packages.config" />
   </ItemGroup>

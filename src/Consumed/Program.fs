@@ -5,7 +5,8 @@ namespace Consumed
 open Contracts
 open CLIParsing
 open Railway
-open Handling
+open CommandHandling
+open QueryHandling
 open EventStore
 
 module program =
@@ -24,7 +25,7 @@ module program =
                         cmd 
                         |> validateCommand
                         >>= handleCommand thetime 
-                        >>= switch ( commandSideEffects (store path) )
+                        >>= switch ( handleCommandSideEffects (store path) )
 
                     match handleCommand cmd with
                     | Success e -> printfn "Yay! Something happened = %A" e
@@ -34,8 +35,13 @@ module program =
                 )  
             | Success(Query(query)) ->
                 (
-                    let readModel = handleQuery (read path) query
-                    printfn "%A" readModel                    
+                    let list = handleQuery (read path) query
+
+                    for c in list.Categories do
+                        printfn "%s" c.Name
+                        for i in c.Items do
+                            let ts = i.Timestamp.ToString("dd/MM/yyyy")
+                            printfn "%s - %s | %s (%s)" ts i.Id i.Description i.Url
                 )
             | Failure ArgumentsMissing -> printfn "Arguments missing. Expecting at least two arguments."
             | Failure NotFound -> printfn "Could not find command or query. Check arguments."

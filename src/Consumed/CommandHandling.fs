@@ -3,9 +3,8 @@
 open System
 open Contracts
 open Railway
-open EventStore
 
-module Handling = 
+module CommandHandling = 
     
     type ValidationFailure =
         | ArgumentEmpty of string
@@ -14,16 +13,7 @@ module Handling =
         
     type CmdResult =
         | Event of stream : string * event : Event 
-    
-    type ConsumedItemReadModel = 
-        { 
-            Id : string; 
-            Timestamp : DateTime;
-            Category : string; 
-            Description: string; 
-            Url: string 
-        }
-     
+       
     let validateCommand cmd =
         match cmd with
         | Consume ( id, category, description, url ) -> 
@@ -57,27 +47,8 @@ module Handling =
                 (
                     sprintf "consumeditem/%s" id,
                     Removed( thetime(), id ) 
-                )) 
-                
-    let handleQuery read query =
-        match query with
-        | Query.List ->
-            (                  
-                let eventsFromStore = read "$all" 
-                let events = eventsFromStore |> Seq.map (fun e -> e.Body) 
-
-                let folder state x = 
-                    match x with
-                    | Event.Consumed ( timestamp, id, category, description, url ) -> 
-                       { Id = id; Timestamp = timestamp; Category = category; Description = description; Url = url } :: state
-                    | Event.Removed ( timestamp, id ) -> 
-                        List.filter (fun x -> x.Id <> id) state
-
-                let result = Seq.fold folder List.empty events
-
-                result
-            )     
-    
-    let commandSideEffects store input =
+                ))                
+  
+    let handleCommandSideEffects store input =
         match input with
         | Event ( stream, event ) -> ( store stream event )

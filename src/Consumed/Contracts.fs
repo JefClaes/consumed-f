@@ -14,3 +14,5 @@ module Contracts =
     type Event =
         | Consumed of timestamp : DateTime * id : string * category : string * description : string * url : string
         | Removed of timestamp : DateTime * id : string
+
+    type StoredEvent =  { Stream : string; Body : Event  }

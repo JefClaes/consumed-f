@@ -2,7 +2,7 @@
 
 open Consumed.Contracts
 open Consumed.Railway
-open Consumed.Handling
+open Consumed.CommandHandling
 open NUnit.Framework
 open FsUnit
 

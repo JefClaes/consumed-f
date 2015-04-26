@@ -8,8 +8,6 @@ open Railway
 
 module EventStore =
       
-    type StoredEvent =  { Stream : string; Body : Event  }
-
     let store path stream e =
         let serialize e = JsonConvert.SerializeObject e
 
