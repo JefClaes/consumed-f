@@ -58,6 +58,6 @@ module program =
 
         exec()
 
-        System.Console.ReadLine() |> ignore
+        Console.ReadLine() |> ignore
 
         0 // return an integer exit code
