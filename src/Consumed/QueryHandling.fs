@@ -33,10 +33,16 @@ module QueryHandling =
 
                 let folder state x = 
                     match x with
-                    | Event.Consumed ( timestamp, id, category, description, url ) -> 
-                        { Id = id; Timestamp = timestamp; Category = category; Description = description; Url = url } :: state
-                    | Event.Removed ( timestamp, id ) -> 
-                        List.filter (fun x -> x.Id <> id) state
+                    | Event.Consumed data -> 
+                        { 
+                            Id = data.Id; 
+                            Timestamp = data.Timestamp; 
+                            Category = data.Category; 
+                            Description = data.Description; 
+                            Url = data.Url 
+                        } :: state
+                    | Event.Removed data -> 
+                        List.filter (fun x -> x.Id <> data.Id) state
 
                 let items = Seq.fold folder List.empty events
                 let categories = 

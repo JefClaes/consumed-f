@@ -13,7 +13,14 @@ let ``Handling consume command, consumes item``() =
     let timestamp = thetime()
     let actual = handleCommand thetime ( Consume("1", "book", "SQL Performance Explained", "http://sqlperfexplained.com"))
     match actual with
-    | Success ( Event ( "consumeditem/1", Event.Consumed(timestamp, "1", "book", "SQL Performance Explained", "http://sqlperfexplained.com" ) ) ) -> Assert.Pass()
+    | Success ( Event ( "consumeditem/1", Event.Consumed
+        {
+            Timestamp = timestamp;
+            Id = "1";
+            Category = "book"; 
+            Description = "SQL Performance Explained";
+            Url = "http://sqlperfexplained.com"
+        } ) ) -> Assert.Pass()
     | _ -> Assert.Fail(actual.ToString())
 
 [<Test>]
@@ -22,5 +29,5 @@ let ``Handling remove command, removes item``() =
     let timestamp = thetime()
     let actual = handleCommand thetime ( Remove("1") )
     match actual with
-    | Success ( Event ( "consumeditem/1", Removed(timestamp, "1" ) ) ) -> Assert.Pass()
+    | Success ( Event ( "consumeditem/1", Removed { Timestamp = timestamp; Id = "1" } ) ) -> Assert.Pass()
     | _ -> Assert.Fail(actual.ToString())

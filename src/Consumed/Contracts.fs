@@ -10,9 +10,11 @@ module Contracts =
 
     type Query =
         | List
-
+           
     type Event =
-        | Consumed of timestamp : DateTime * id : string * category : string * description : string * url : string
-        | Removed of timestamp : DateTime * id : string
+        | Consumed of data : ConsumedData
+        | Removed of data : RemovedData
+    and ConsumedData = { Timestamp : DateTime; Id : string; Category : string; Description : string; Url : string }
+    and RemovedData = { Timestamp : DateTime; Id : string }
 
     type StoredEvent =  { Stream : string; Body : Event  }

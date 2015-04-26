@@ -40,13 +40,20 @@ module CommandHandling =
             Success ( Event 
                 ( 
                     sprintf "consumeditem/%s" id, 
-                    Consumed( thetime(), id, category, description, url) 
+                    Consumed 
+                        { 
+                            Timestamp = thetime()
+                            Id = id;
+                            Category = category;
+                            Description = description;
+                            Url = url
+                        } 
                 ))
         | Command.Remove ( id ) ->
             Success ( Event
                 (
                     sprintf "consumeditem/%s" id,
-                    Removed( thetime(), id ) 
+                    Removed { Timestamp = thetime(); Id = id } 
                 ))                
   
     let handleCommandSideEffects store input =

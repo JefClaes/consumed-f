@@ -12,33 +12,38 @@ let ``Quering list returns correct list``() =
         [
             { 
                 Stream = "consumed/1"; 
-                Body = Event.Consumed(new DateTime(2014, 1, 1), "1", "book", "Dune", "http://dunenovels.com")
+                Body = Event.Consumed 
+                    {
+                        Timestamp = new DateTime(2014, 1, 1);
+                        Id = "1";
+                        Category = "book";
+                        Description = "Dune";
+                        Url = "http://dunenovels.com"
+                    }
             };
             { 
                 Stream = "consumed/2"; 
-                Body = Event.Consumed(new DateTime(2014, 1, 1), "2", "movie", "Gravity", "http://gravitymovie.com")
+                Body = Event.Consumed
+                    {
+                        Timestamp = new DateTime(2014, 1, 1);
+                        Id = "2";
+                        Category = "movie";
+                        Description = "Gravity";
+                        Url = "http://gravitymovie.com"
+                    }
             };
             {
                 Stream = "consumed/2";
-                Body = Event.Removed(new DateTime(2014, 1, 1), "2")
+                Body = Event.Removed
+                    {
+                        Timestamp = new DateTime(2014, 1, 1);
+                        Id = "2"
+                    } 
             }
         ]
 
     let actual = handleQuery read Query.List
-    let expected = 
-        {
-            Categories = 
-            [
-                { 
-                    Name = "book";
-                    Items = 
-                    [
-                        
-                    ]
-                }
-            ]
-        }
-
+  
     actual.Categories |> Seq.length |> should equal 1
     (actual.Categories |> Seq.head).Name |> should equal "book"
     (actual.Categories |> Seq.head).Items |> Seq.length |> should equal 1
