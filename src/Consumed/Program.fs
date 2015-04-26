@@ -2,6 +2,7 @@
 // See the 'F# Tutorial' project for more help.
 namespace Consumed
 
+open System
 open Contracts
 open CLIParsing
 open Railway
@@ -14,7 +15,14 @@ module program =
     [<EntryPoint>]
     let main argv = 
         printfn "%A" argv
-      
+                  
+        if ((argv |> Seq.length) = 1 && argv.[0] = "help") then
+            printfn "Following commands are available:"
+            printfn "-n consume -id id -c category -d description -u url"
+            printfn "-n remove -id id"
+            printfn "-n list"
+            Environment.Exit(0)
+
         let path = "d:\\store.txt"
 
         let exec() = 
