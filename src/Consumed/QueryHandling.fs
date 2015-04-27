@@ -27,10 +27,7 @@ module QueryHandling =
     let handleQuery read query =
         match query with
         | Query.List ->
-            (                  
-                let eventsFromStore = read "$all" 
-                let events = eventsFromStore |> Seq.map (fun e -> e.Body) 
-
+            (             
                 let folder state x = 
                     match x with
                     | Event.Consumed data -> 
@@ -44,10 +41,15 @@ module QueryHandling =
                     | Event.Removed data -> 
                         List.filter (fun x -> x.Id <> data.Id) state
 
-                let items = Seq.fold folder List.empty events
-                let categories = 
-                    items 
-                    |> Seq.groupBy (fun x -> x.Category)
-                    |> Seq.map (fun ( x, y ) -> { Name = x; Items = y })
-                { Categories = categories }
+                match read "$all"  with
+                | EventStream.NotExists _ -> { Categories = Seq.empty }
+                | EventStream.Exists ( _, events ) -> 
+                    (
+                        let items = Seq.fold folder List.empty events
+                        let categories = 
+                            items 
+                            |> Seq.groupBy (fun x -> x.Category)
+                            |> Seq.map (fun ( x, y ) -> { Name = x; Items = y })
+                        { Categories = categories }                    
+                    )               
             )

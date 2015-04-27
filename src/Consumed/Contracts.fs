@@ -18,5 +18,7 @@ module Contracts =
         | Removed of data : RemovedData
     and ConsumedData = { Timestamp : DateTime; Id : string; Category : string; Description : string; Url : string }
     and RemovedData = { Timestamp : DateTime; Id : string }
-
-    type StoredEvent =  { Stream : string; Body : Event  }
+      
+    type EventStream =
+        | NotExists of name : string
+        | Exists of name : string * events : seq<Event>

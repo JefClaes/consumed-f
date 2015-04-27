@@ -14,6 +14,8 @@ module CommandHandling =
     type CmdResult =
         | Event of stream : string * event : Event 
        
+    type ConsumedItem = { Id : string; Category : string; Description : string ; Url : string }
+
     let validateCommand cmd =
         match cmd with
         | Consume data -> 
@@ -33,7 +35,7 @@ module CommandHandling =
             )
     
     let thetime() = DateTime.UtcNow
-
+   
     let handleCommand thetime cmd =       
         match cmd with
         | Command.Consume data ->

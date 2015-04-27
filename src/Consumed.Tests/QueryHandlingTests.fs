@@ -9,38 +9,31 @@ open FsUnit
 [<Test>]
 let ``Quering list returns correct list``() =
     let read stream =
-        [
-            { 
-                Stream = "consumed/1"; 
-                Body = Event.Consumed 
-                    {
-                        Timestamp = new DateTime(2014, 1, 1);
-                        Id = "1";
-                        Category = "book";
-                        Description = "Dune";
-                        Url = "http://dunenovels.com"
-                    }
-            };
-            { 
-                Stream = "consumed/2"; 
-                Body = Event.Consumed
-                    {
-                        Timestamp = new DateTime(2014, 1, 1);
-                        Id = "2";
-                        Category = "movie";
-                        Description = "Gravity";
-                        Url = "http://gravitymovie.com"
-                    }
-            };
-            {
-                Stream = "consumed/2";
-                Body = Event.Removed
-                    {
-                        Timestamp = new DateTime(2014, 1, 1);
-                        Id = "2"
-                    } 
-            }
+        let events = [
+            Event.Consumed 
+                {
+                    Timestamp = new DateTime(2014, 1, 1);
+                    Id = "1";
+                    Category = "book";
+                    Description = "Dune";
+                    Url = "http://dunenovels.com"
+                };
+            Event.Consumed
+                {
+                    Timestamp = new DateTime(2014, 1, 1);
+                    Id = "2";
+                    Category = "movie";
+                    Description = "Gravity";
+                    Url = "http://gravitymovie.com"
+                };
+            Event.Removed
+                {
+                    Timestamp = new DateTime(2014, 1, 1);
+                    Id = "2"
+                } 
         ]
+
+        EventStream.Exists ( "^all", events )     
 
     let actual = handleQuery read Query.List
   

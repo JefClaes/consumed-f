@@ -8,6 +8,8 @@ open Railway
 
 module EventStore =
       
+    type StoredEvent =  { Stream : string; Body : Event  }
+
     let store path stream e =
         let serialize e = JsonConvert.SerializeObject e
 
@@ -26,6 +28,11 @@ module EventStore =
 
         let readFromDisk = File.ReadAllLines path
 
-        match stream with
-        | "$all" -> readFromDisk |> Seq.map deserialize
-        | _ -> raise (NotSupportedException("Only $all stream supported"))
+        let eventsFromDisk = 
+            match stream with
+            | "$all" -> readFromDisk |> Seq.map deserialize 
+            | _ -> raise (NotSupportedException("Only $all stream supported"))
+
+        match eventsFromDisk |> Seq.isEmpty with
+        | true -> EventStream.NotExists stream
+        | false -> EventStream.Exists (stream, eventsFromDisk |> Seq.map (fun e -> e.Body))
