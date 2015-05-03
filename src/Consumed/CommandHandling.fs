@@ -5,13 +5,15 @@ open Contracts
 open Railway
 
 module CommandHandling = 
-    
-    type ValidationFailure =
+             
+    type HandlingFailure =
         | ArgumentEmpty of string
         | ArgumentStructure of string    
         | ArgumentOutOfRange of string
-        
-    type CmdResult =
+        | ItemAlreadyConsumed
+        | ItemDoesNotExist
+
+    type CmdResult =        
         | Event of stream : string * event : Event 
        
     type ConsumedItem = { Id : string; Category : string; Description : string ; Url : string }
@@ -36,27 +38,24 @@ module CommandHandling =
     
     let thetime() = DateTime.UtcNow
    
-    let handleCommand thetime cmd =       
+    let handleCommand read thetime cmd =       
         match cmd with
         | Command.Consume data ->
-            Success ( Event 
-                ( 
-                    sprintf "consumeditem/%s" data.Id, 
-                    Consumed 
-                        { 
-                            Timestamp = thetime()
-                            Id = data.Id;
-                            Category = data.Category;
-                            Description = data.Description;
-                            Url = data.Url
-                        } 
-                ))
+            let name = sprintf "consumeditem/%s" data.Id
+
+            match read name with
+            | EventStream.Exists ( _ , _ ) ->
+                Failure ItemAlreadyConsumed
+            | EventStream.NotExists name -> 
+                Success ( Event ( name, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ))
         | Command.Remove data ->
-            Success ( Event
-                (
-                    sprintf "consumeditem/%s" data.Id,
-                    Removed { Timestamp = thetime(); Id = data.Id } 
-                ))                
+            let name = sprintf "consumeditem/%s" data.Id
+
+            match read name with
+            | EventStream.NotExists ( _ ) ->
+                Failure ItemDoesNotExist
+            | EventStream.Exists ( name , _ ) ->                                 
+                Success ( Event ( name, Removed { Timestamp = thetime(); Id = data.Id } ) )                
   
     let handleCommandSideEffects store input =
         match input with

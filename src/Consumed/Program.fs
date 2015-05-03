@@ -29,14 +29,17 @@ module program =
             match parse argv with
             | Success(Command(cmd)) -> 
                 (
+                    let read stream = read path stream
                     let handleCommand cmd = 
                         cmd 
                         |> validateCommand
-                        >>= handleCommand thetime 
+                        >>= handleCommand read thetime 
                         >>= switch ( handleCommandSideEffects (store path) )
 
                     match handleCommand cmd with
                     | Success e -> printfn "Yay! Something happened = %A" e
+                    | Failure(ItemAlreadyConsumed) -> printfn "Item was already consumed"
+                    | Failure(ItemDoesNotExist) -> printfn "Item does not exist"
                     | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x   
                     | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
                     | Failure(ArgumentOutOfRange x) -> printfn "Argument out of range = %A" x
