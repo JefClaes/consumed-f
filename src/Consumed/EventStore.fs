@@ -26,12 +26,12 @@ module EventStore =
     let read path stream =       
         let deserialize x = JsonConvert.DeserializeObject<StoredEvent>(x)
 
-        let readFromDisk = File.ReadAllLines path
+        let readFromDisk = File.ReadAllLines path |> Seq.map deserialize
 
         let eventsFromDisk = 
             match stream with
-            | "$all" -> readFromDisk |> Seq.map deserialize 
-            | _ -> raise (NotSupportedException("Only $all stream supported"))
+            | "$all" -> readFromDisk 
+            | _ -> readFromDisk |> Seq.filter (fun e -> e.Stream = stream)
 
         match eventsFromDisk |> Seq.isEmpty with
         | true -> EventStream.NotExists stream

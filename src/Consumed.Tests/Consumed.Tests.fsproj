@@ -55,6 +55,7 @@
     <Compile Include="ValidationTests.fs" />
     <Compile Include="CommandHandlingTests.fs" />
     <Compile Include="QueryHandlingTests.fs" />
+    <Compile Include="EventStoreTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FsUnit.NUnit">
