@@ -19,9 +19,7 @@ module EventStore =
         
         let eventOnDisk = { Stream = stream; Body = e } 
 
-        writeToDisk ( serialize eventOnDisk  )
-
-        Success eventOnDisk
+        serialize eventOnDisk |> writeToDisk |> Success
 
     let read path stream =       
         let deserialize x = JsonConvert.DeserializeObject<StoredEvent>(x)
