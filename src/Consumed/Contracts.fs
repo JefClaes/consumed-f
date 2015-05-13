@@ -10,8 +10,7 @@ module Contracts =
     and ConsumeData =  { Id : string; Category : string; Description : string; Url : string }
     and RemoveData = { Id : string; }
 
-    type Query =
-        | List
+    type Query = | List
            
     type Event =
         | Consumed of data : ConsumedData
