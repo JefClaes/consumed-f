@@ -13,11 +13,8 @@ module CommandHandling =
         | ItemAlreadyConsumed
         | ItemDoesNotExist
 
-    type CmdResult =        
-        | Event of stream : string * event : Event 
+    type CmdResult = | Event of stream : string * event : Event 
        
-    type ConsumedItem = { Id : string; Category : string; Description : string ; Url : string }
-
     let validateCommand cmd =
         match cmd with
         | Consume data -> 
