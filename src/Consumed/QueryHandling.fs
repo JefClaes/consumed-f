@@ -27,7 +27,7 @@ module QueryHandling =
     let handleQuery read query =
         match query with
         | Query.List ->
-            (             
+            (
                 let folder state x = 
                     match x with
                     | Event.Consumed data -> 
@@ -45,11 +45,11 @@ module QueryHandling =
                 | EventStream.NotExists _ -> { Categories = Seq.empty }
                 | EventStream.Exists ( _, events ) -> 
                     (
-                        let items = Seq.fold folder List.empty events
+                        let items = Seq.fold folder [] events
                         let categories = 
                             items 
                             |> Seq.groupBy (fun x -> x.Category)
                             |> Seq.map (fun ( x, y ) -> { Name = x; Items = y })
-                        { Categories = categories }                    
-                    )               
+                        { Categories = categories }
+                    )
             )

@@ -21,24 +21,24 @@ module CLIParsing =
             | true -> Success input 
             | false -> Failure ArgumentsMissing 
                
-        let pair input =    
+        let pair input =
             input 
-            |> Seq.pairwise   
+            |> Seq.pairwise
             |> Seq.mapi (fun i x -> if i % 2 = 0 then Some(x) else None)
-            |> Seq.choose id               
-             
+            |> Seq.choose id
+                         
         let ensureKeysDontLookLikeValue ( arguments : seq<string * string> ) =
             let looksLikeValue = 
                 arguments 
                 |> Seq.tryFind ( fun ( k, _ ) -> not (k.StartsWith("-") || k.StartsWith("--")) )
             match looksLikeValue with
             | Some ( key, _ ) -> Failure(KeyLooksLikeValue key)
-            | None -> Success arguments            
+            | None -> Success arguments
 
-        let stripKeys ( arguments : seq<string * string> ) =        
+        let stripKeys ( arguments : seq<string * string> ) =
             arguments |> Seq.map (fun ( k, v ) -> ( k.Replace("-", "").ToLower(), v ))
     
-        let ensureKeyExists key arguments =      
+        let ensureKeyExists key arguments =
             match arguments |> Seq.exists (fun ( k, _ ) -> k = key ) with
             | true -> Success arguments
             | false -> Failure(KeyMissing key)
@@ -60,4 +60,3 @@ module CLIParsing =
             >>= switch stripKeys
             >>= ensureKeyExists "n"
             >>= toCommandOrQuery
-

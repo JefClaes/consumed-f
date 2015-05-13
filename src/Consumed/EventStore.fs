@@ -15,13 +15,13 @@ module EventStore =
 
         let writeToDisk ( line : string ) = 
             use wr = new StreamWriter(path, true)
-            wr.WriteLine(line)       
+            wr.WriteLine(line)
         
         let eventOnDisk = { Stream = stream; Body = e } 
 
         serialize eventOnDisk |> writeToDisk |> Success
 
-    let read path stream =       
+    let read path stream =
         let deserialize x = JsonConvert.DeserializeObject<StoredEvent>(x)
 
         let readFromDisk = File.ReadAllLines path |> Seq.map deserialize
