@@ -32,8 +32,8 @@ module program =
                     let read stream = read path stream
                     let handleCommand cmd = 
                         cmd 
-                        |> validateCommand
-                        >>= handleCommand read thetime 
+                        |> validate
+                        >>= handle read thetime 
                         >>= switch ( handleCommandSideEffects (store path) )
 
                     match handleCommand cmd with

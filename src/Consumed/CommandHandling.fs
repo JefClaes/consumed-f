@@ -15,15 +15,15 @@ module CommandHandling =
 
     type CmdResult = | Event of stream : string * event : Event 
        
-    let validateCommand cmd =
+    let validate cmd =
         match cmd with
         | Consume data -> 
             (
                 if data.Id = "" then Failure(ArgumentEmpty("id"))
                 else if data.Category = "" then Failure(ArgumentEmpty("category"))
-                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then Failure(ArgumentOutOfRange("category"))
                 else if data.Description = "" then Failure(ArgumentEmpty("description"))
                 else if data.Url = "" then Failure(ArgumentEmpty("url"))
+                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then Failure(ArgumentOutOfRange("category"))            
                 else if not ( data.Url.Contains("http://") || data.Url.Contains("https://") ) then Failure(ArgumentStructure("url"))
                 else Success cmd
             )
@@ -35,7 +35,7 @@ module CommandHandling =
     
     let thetime() = DateTime.UtcNow
    
-    let handleCommand read thetime cmd =
+    let handle read thetime cmd =
         match cmd with
         | Command.Consume data ->
             let name = sprintf "consumeditem/%s" data.Id

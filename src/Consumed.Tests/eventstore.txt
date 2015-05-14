@@ -1,2 +1,2 @@
-{"Stream":"test/1","Body":{"Case":"Removed","Fields":[{"Timestamp":"2015-05-04T09:21:03.8308554+02:00","Id":"1"}]}}
-{"Stream":"test/2","Body":{"Case":"Removed","Fields":[{"Timestamp":"2015-05-04T09:21:04.4388197+02:00","Id":"2"}]}}
+{"Stream":"test/1","Body":{"Case":"Removed","Fields":[{"Timestamp":"2015-05-14T01:17:44.6153572+02:00","Id":"1"}]}}
+{"Stream":"test/2","Body":{"Case":"Removed","Fields":[{"Timestamp":"2015-05-14T01:17:45.5319281+02:00","Id":"2"}]}}
