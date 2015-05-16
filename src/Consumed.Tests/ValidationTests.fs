@@ -8,7 +8,7 @@ open FsUnit
 
 let assertReturnsEmptyArgument x result =
     match result with
-    | Failure(ArgumentEmpty x) -> Assert.Pass()
+    | Failure(HandlingFailure.Validation(ArgumentEmpty x)) -> Assert.Pass()
     | _ -> Assert.Fail()
 
 [<Test>]
@@ -25,7 +25,7 @@ let ``Validating consume command without description returns argument empty``() 
 let ``Validating consume command with category that does not exist returns out of range``() = 
     let actual = validate ( Consume { Id = "1"; Category = "i_do_not_exist"; Description = "Game of Thrones"; Url = "http://gameofthrones.com" } )
     match actual with
-    | Failure(ArgumentOutOfRange "category") -> Assert.Pass()
+    | Failure(HandlingFailure.Validation(ArgumentOutOfRange "category")) -> Assert.Pass()
     | _ -> Assert.Fail()
    
 [<Test>]
@@ -37,7 +37,7 @@ let ``Validating consume command without url returns argument empty``() =
 let ``Validating consume command with url in wrong structure returns argument structure``() = 
     let actual = validate ( Consume { Id = "1"; Category = "book"; Description = "Game of Thrones"; Url = "gameofthrones.com" } )
     match actual with
-    | Failure(ArgumentStructure "url") -> Assert.Pass()
+    | Failure(HandlingFailure.Validation(ArgumentStructure "url")) -> Assert.Pass()
     | _ -> Assert.Fail()
 
 [<Test>]

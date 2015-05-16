@@ -6,30 +6,39 @@ open Railway
 
 module CommandHandling = 
              
-    type HandlingFailure =
+    type ValidationFailure =
         | ArgumentEmpty of string
         | ArgumentStructure of string  
         | ArgumentOutOfRange of string
+
+    type CommandFailure =
         | ItemAlreadyConsumed
         | ItemDoesNotExist
 
+    type HandlingFailure =
+        | Validation of ValidationFailure
+        | Command of CommandFailure
+
     type CmdResult = | Event of stream : string * event : Event 
        
+    let validationFails f = Failure(HandlingFailure.Validation(f))
+    let commandFails f = Failure(HandlingFailure.Command(f))
+
     let validate cmd =
         match cmd with
         | Consume data -> 
             (
-                if data.Id = "" then Failure(ArgumentEmpty("id"))
-                else if data.Category = "" then Failure(ArgumentEmpty("category"))
-                else if data.Description = "" then Failure(ArgumentEmpty("description"))
-                else if data.Url = "" then Failure(ArgumentEmpty("url"))
-                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then Failure(ArgumentOutOfRange("category"))            
-                else if not ( data.Url.Contains("http://") || data.Url.Contains("https://") ) then Failure(ArgumentStructure("url"))
+                if data.Id = "" then validationFails(ArgumentEmpty("id"))
+                else if data.Category = "" then validationFails(ArgumentEmpty("category"))
+                else if data.Description = "" then validationFails(ArgumentEmpty("description"))
+                else if data.Url = "" then validationFails(ArgumentEmpty("url"))
+                else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then validationFails(ArgumentOutOfRange("category"))         
+                else if not ( data.Url.Contains("http://") || data.Url.Contains("https://") ) then validationFails(ArgumentStructure("url"))
                 else Success cmd
             )
         | Remove data -> 
             (
-                if data.Id = "" then Failure(ArgumentEmpty("id"))
+                if data.Id = "" then validationFails(ArgumentEmpty("id"))
                 else Success cmd
             )
     
@@ -42,7 +51,7 @@ module CommandHandling =
 
             match read name with
             | EventStream.Exists _ ->
-                Failure ItemAlreadyConsumed
+                commandFails ItemAlreadyConsumed
             | EventStream.NotExists name -> 
                 Success ( Event ( name, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ))
         | Command.Remove data ->
@@ -50,7 +59,7 @@ module CommandHandling =
 
             match read name with
             | EventStream.NotExists ( _ ) ->
-                Failure ItemDoesNotExist
+                commandFails ItemDoesNotExist
             | EventStream.Exists ( name , _ ) ->
                 Success ( Event ( name, Removed { Timestamp = thetime(); Id = data.Id } ) )
   

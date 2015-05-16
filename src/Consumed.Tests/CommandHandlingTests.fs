@@ -54,5 +54,5 @@ let ``Handling remove command when item hasn't been consumed yet, fails because 
     let thetime() = new DateTime(2015, 1, 1)
     let actual = handle read thetime ( Remove { Id = "1" } )
     match actual with
-    | Failure ItemDoesNotExist -> Assert.Pass()
+    | Failure(HandlingFailure.Command(ItemDoesNotExist)) -> Assert.Pass()
     | _ -> Assert.Fail()

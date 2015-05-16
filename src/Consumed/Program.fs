@@ -27,7 +27,7 @@ module program =
 
         let exec() = 
             match parse argv with
-            | Success(Command(cmd)) -> 
+            | Success(ParseResult.Command(cmd)) -> 
                 (
                     let read stream = read path stream
                     let handleCommand cmd = 
@@ -38,11 +38,16 @@ module program =
 
                     match handleCommand cmd with
                     | Success e -> printfn "Yay! Something happened = %A" e
-                    | Failure(ItemAlreadyConsumed) -> printfn "Item was already consumed"
-                    | Failure(ItemDoesNotExist) -> printfn "Item does not exist"
-                    | Failure(ArgumentEmpty x) -> printfn "Argument empty = %A" x
-                    | Failure(ArgumentStructure x) -> printfn "Argument structure invalid = %A" x
-                    | Failure(ArgumentOutOfRange x) -> printfn "Argument out of range = %A" x
+                    | Failure(HandlingFailure.Command(ItemAlreadyConsumed)) 
+                        -> printfn "Item was already consumed"
+                    | Failure(HandlingFailure.Command(ItemDoesNotExist)) 
+                        -> printfn "Item does not exist"
+                    | Failure(HandlingFailure.Validation(ArgumentEmpty x)) 
+                        -> printfn "Argument empty = %A" x
+                    | Failure(HandlingFailure.Validation(ArgumentStructure x)) 
+                        -> printfn "Argument structure invalid = %A" x
+                    | Failure(HandlingFailure.Validation(ArgumentOutOfRange x)) 
+                        -> printfn "Argument out of range = %A" x
                 )
             | Success(Query(query)) ->
                 (
