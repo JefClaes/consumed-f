@@ -34,19 +34,20 @@ module program =
                         cmd 
                         |> validate
                         >>= handle read thetime 
-                        >>= switch ( handleCommandSideEffects (store path) )
+                        >>= switch ( sideEffects (store path) )
 
                     match handleCommand cmd with
-                    | Success e -> printfn "Yay! Something happened = %A" e
-                    | Failure(HandlingFailure.Command(ItemAlreadyConsumed)) 
+                    | Success e 
+                        -> printfn "Yay! Something happened = %A" e
+                    | Failure(Command(ItemAlreadyConsumed)) 
                         -> printfn "Item was already consumed"
-                    | Failure(HandlingFailure.Command(ItemDoesNotExist)) 
+                    | Failure(Command(ItemDoesNotExist)) 
                         -> printfn "Item does not exist"
-                    | Failure(HandlingFailure.Validation(ArgumentEmpty x)) 
+                    | Failure(Validation(ArgumentEmpty x)) 
                         -> printfn "Argument empty = %A" x
-                    | Failure(HandlingFailure.Validation(ArgumentStructure x)) 
+                    | Failure(Validation(ArgumentStructure x)) 
                         -> printfn "Argument structure invalid = %A" x
-                    | Failure(HandlingFailure.Validation(ArgumentOutOfRange x)) 
+                    | Failure(Validation(ArgumentOutOfRange x)) 
                         -> printfn "Argument out of range = %A" x
                 )
             | Success(Query(query)) ->

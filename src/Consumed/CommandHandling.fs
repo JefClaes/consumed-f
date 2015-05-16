@@ -21,8 +21,9 @@ module CommandHandling =
 
     type CmdResult = | Event of stream : string * event : Event 
        
-    let validationFails f = Failure(HandlingFailure.Validation(f))
-    let commandFails f = Failure(HandlingFailure.Command(f))
+    let succeeds s = Success s
+    let validationFails f = Failure(Validation(f))
+    let commandFails f = Failure(Command(f))
 
     let validate cmd =
         match cmd with
@@ -34,12 +35,12 @@ module CommandHandling =
                 else if data.Url = "" then validationFails(ArgumentEmpty("url"))
                 else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then validationFails(ArgumentOutOfRange("category"))         
                 else if not ( data.Url.Contains("http://") || data.Url.Contains("https://") ) then validationFails(ArgumentStructure("url"))
-                else Success cmd
+                else succeeds cmd
             )
         | Remove data -> 
             (
                 if data.Id = "" then validationFails(ArgumentEmpty("id"))
-                else Success cmd
+                else succeeds cmd
             )
     
     let thetime() = DateTime.UtcNow
@@ -53,7 +54,7 @@ module CommandHandling =
             | EventStream.Exists _ ->
                 commandFails ItemAlreadyConsumed
             | EventStream.NotExists name -> 
-                Success ( Event ( name, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ))
+                succeeds ( Event ( name, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ) )
         | Command.Remove data ->
             let name = sprintf "consumeditem/%s" data.Id
 
@@ -61,8 +62,8 @@ module CommandHandling =
             | EventStream.NotExists ( _ ) ->
                 commandFails ItemDoesNotExist
             | EventStream.Exists ( name , _ ) ->
-                Success ( Event ( name, Removed { Timestamp = thetime(); Id = data.Id } ) )
+                succeeds ( Event ( name, Removed { Timestamp = thetime(); Id = data.Id } ) )
   
-    let handleCommandSideEffects store input =
+    let sideEffects store input =
         match input with
         | Event ( stream, event ) -> ( store stream event )
