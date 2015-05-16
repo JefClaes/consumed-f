@@ -48,21 +48,21 @@ module CommandHandling =
     let handle read thetime cmd =
         match cmd with
         | Command.Consume data ->
-            let name = sprintf "consumeditem/%s" data.Id
+            let stream = sprintf "consumeditem/%s" data.Id
 
-            match read name with
+            match read stream with
             | EventStream.Exists _ ->
                 commandFails ItemAlreadyConsumed
-            | EventStream.NotExists name -> 
-                succeeds ( Event ( name, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ) )
+            | EventStream.NotExists stream -> 
+                succeeds ( Event ( stream, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ) )
         | Command.Remove data ->
-            let name = sprintf "consumeditem/%s" data.Id
+            let stream = sprintf "consumeditem/%s" data.Id
 
-            match read name with
+            match read stream with
             | EventStream.NotExists ( _ ) ->
                 commandFails ItemDoesNotExist
-            | EventStream.Exists ( name , _ ) ->
-                succeeds ( Event ( name, Removed { Timestamp = thetime(); Id = data.Id } ) )
+            | EventStream.Exists ( stream , _ ) ->
+                succeeds ( Event ( stream, Removed { Timestamp = thetime(); Id = data.Id } ) )
   
     let sideEffects store input =
         match input with
