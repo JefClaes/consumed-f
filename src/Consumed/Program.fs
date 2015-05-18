@@ -24,7 +24,7 @@ module program =
             printfn "-n list"
             Environment.Exit(0)
 
-        let path = "C:\\store.txt"
+        let path = "store.txt"
 
         if not (File.Exists path) then File.Create path |> ignore
 
@@ -37,10 +37,10 @@ module program =
                         cmd 
                         |> validate
                         >>= CommandHandling.handle read thetime 
-                        >>= switch ( sideEffects (store path) )
+                        >>= switch ( sideEffects (store path) )                    
 
                     match handleCommand cmd with
-                    | Success e 
+                    | Success e
                         -> printfn "Yay! Something happened = %A" e
                     | Failure(Command(ItemAlreadyConsumed)) 
                         -> printfn "Item was already consumed"

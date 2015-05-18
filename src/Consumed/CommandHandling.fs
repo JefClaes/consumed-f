@@ -66,4 +66,4 @@ module CommandHandling =
   
     let sideEffects store input =
         match input with
-        | Event ( stream, event ) -> ( store stream event )
+        | Event ( stream, event ) -> store stream event
