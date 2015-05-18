@@ -35,7 +35,7 @@ let ``Quering list returns correct list``() =
 
         EventStream.Exists ( "^all", events )     
 
-    let actual = handleQuery read Query.List
+    let actual = handle read Query.List
   
     actual.Categories |> Seq.length |> should equal 1
     (actual.Categories |> Seq.head).Name |> should equal "book"

@@ -3,6 +3,7 @@
 namespace Consumed
 
 open System
+open System.IO
 open Contracts
 open CLIParsing
 open Railway
@@ -16,14 +17,16 @@ module program =
     let main argv = 
         printfn "%A" argv
                   
-        if ((argv |> Seq.length) = 1 && argv.[0] = "help") then
+        if ((argv |> Seq.length) = 1 && argv.[0] = "-help") then
             printfn "Following commands are available:"
             printfn "-n consume -id id -c category -d description -u url"
             printfn "-n remove -id id"
             printfn "-n list"
             Environment.Exit(0)
 
-        let path = "d:\\store.txt"
+        let path = "C:\\store.txt"
+
+        if not (File.Exists path) then File.Create path |> ignore
 
         let exec() = 
             match parse argv with
@@ -33,7 +36,7 @@ module program =
                     let handleCommand cmd = 
                         cmd 
                         |> validate
-                        >>= handle read thetime 
+                        >>= CommandHandling.handle read thetime 
                         >>= switch ( sideEffects (store path) )
 
                     match handleCommand cmd with
@@ -52,7 +55,7 @@ module program =
                 )
             | Success(Query(query)) ->
                 (
-                    let list = handleQuery (read path) query
+                    let list = QueryHandling.handle (read path) query
 
                     for c in list.Categories do
                         printfn "%s" c.Name

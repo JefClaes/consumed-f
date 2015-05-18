@@ -6,30 +6,16 @@ open EventStore
 
 module QueryHandling =
 
-    type ConsumedItemList =
-        {
-            Categories : seq<ConsumedCategory>
-        }
-    and ConsumedCategory = 
-        {
-            Name : string;
-            Items : seq<ConsumedItem>;
-        }
-    and ConsumedItem = 
-        { 
-            Id : string; 
-            Timestamp : DateTime;
-            Category : string; 
-            Description: string; 
-            Url: string 
-        }
+    type List = { Categories : seq<Category> }
+        and Category = { Name : string; Items : seq<Item>; }
+        and Item = { Id : string; Timestamp : DateTime; Category : string; Description: string; Url: string }
 
-    let handleQuery read query =
+    let handle read query =
         match query with
         | Query.List ->
             (
-                let folder state x = 
-                    match x with
+                let folder state e = 
+                    match e with
                     | Event.Consumed data -> 
                         { 
                             Id = data.Id; 
@@ -43,13 +29,14 @@ module QueryHandling =
 
                 match read "$all"  with
                 | EventStream.NotExists _ -> { Categories = Seq.empty }
-                | EventStream.Exists ( _, events ) -> 
+                | EventStream.Exists ( _ , events ) -> 
                     (
                         let items = Seq.fold folder [] events
                         let categories = 
                             items 
+                            |> Seq.sortBy (fun x -> x.Timestamp) 
                             |> Seq.groupBy (fun x -> x.Category)
-                            |> Seq.map (fun ( x, y ) -> { Name = x; Items = y })
+                            |> Seq.map (fun ( x , y ) -> { Name = x; Items = y })
                         { Categories = categories }
                     )
             )
