@@ -34,9 +34,8 @@ module QueryHandling =
                         let items = Seq.fold folder [] events
                         let categories = 
                             items 
-                            |> Seq.sortBy (fun x -> x.Timestamp) 
                             |> Seq.groupBy (fun x -> x.Category)
-                            |> Seq.map (fun ( x , y ) -> { Name = x; Items = y })
+                            |> Seq.map (fun ( x , y ) -> { Name = x; Items = y |> Seq.sortBy (fun x -> x.Timestamp) })
                         { Categories = categories }
                     )
             )
