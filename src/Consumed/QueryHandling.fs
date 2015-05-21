@@ -6,7 +6,7 @@ open EventStore
 
 module QueryHandling =
 
-    type List = { Categories : seq<Category> }
+    type ListResult = { Categories : seq<Category> }
         and Category = { Name : string; Items : seq<Item>; }
         and Item = { Id : string; Timestamp : DateTime; Category : string; Description: string; Url: string }
 
