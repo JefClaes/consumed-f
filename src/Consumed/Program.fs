@@ -59,6 +59,7 @@ module program =
 
                     for c in list.Categories do
                         printfn "%s" c.Name
+                        printfn "%s" (String.replicate c.Name.Length "-")
                         for i in c.Items do
                             let ts = i.Timestamp.ToString("dd/MM/yyyy")
                             printfn "%s - %s | %s (%s)" ts i.Id i.Description i.Url
