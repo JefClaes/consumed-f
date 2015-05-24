@@ -14,10 +14,10 @@ let ``Handling consume command, consumes item``() =
     let timestamp = thetime()
     let actual = handle read thetime ( Consume( { Category = "book"; Description = "SQL Performance Explained"; Url = "http://sqlperfexplained.com" }) )
     match actual with
-    | Success ( Event ( "consumeditem/1", Event.Consumed
+    | Success ( Event ( "consumeditem/20150101000000", Event.Consumed
         {
             Timestamp = timestamp;
-            Id = "1";
+            Id = "20150101000000";
             Category = "book"; 
             Description = "SQL Performance Explained";
             Url = "http://sqlperfexplained.com"

@@ -15,7 +15,7 @@ let ``Parsing without arguments fails w ArgumentsMissing``() =
 [<Test>]
 let ``Parsing with an extra key ignores the key``() = 
     let expected = Consume { Category = "book"; Description = "The Dark Tower"; Url = "http://thedarktower.com" }
-    let actual = parse [| "--n"; "consume"; "--id"; "1"; "--c"; "book";  "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; "--z" |]
+    let actual = parse [| "--n"; "consume"; "--c"; "book";  "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; "--z" |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
     | _ -> Assert.Fail()
@@ -23,7 +23,7 @@ let ``Parsing with an extra key ignores the key``() =
 [<Test>]
 let ``Parsing consume command``() =  
     let expected = Consume { Category = "book"; Description = "The Dark Tower"; Url = "http://thedarktower.com" }
-    let actual = parse [| "--n"; "consume"; "--id"; "2"; "--c"; "book"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; |]
+    let actual = parse [| "--n"; "consume"; "--c"; "book"; "--d"; "The Dark Tower"; "--u"; "http://thedarktower.com"; |]
     match actual with
     | Success(Command(x)) -> x |> should equal expected
     | _ -> Assert.Fail(actual.ToString()) 

@@ -10,11 +10,6 @@ let assertReturnsEmptyArgument x result =
     match result with
     | Failure(HandlingFailure.Validation(ArgumentEmpty x)) -> Assert.Pass()
     | _ -> Assert.Fail()
-
-[<Test>]
-let ``Validating consume command without id returns argument empty``() = 
-    validate ( Consume { Category = "book"; Description = "Game of Thrones"; Url = "http://gameofthrones.com" } )
-    |> assertReturnsEmptyArgument "id"
       
 [<Test>]
 let ``Validating consume command without description returns argument empty``() = 

@@ -48,7 +48,7 @@ module CommandHandling =
         match cmd with
         | Command.Consume data ->
             let time = thetime()
-            let id = time.ToString("ddMMyyyyHHmmss")
+            let id = time.ToString("yyyyMMddHHmmss")
             let stream = sprintf "consumeditem/%s" id
 
             match read stream with
