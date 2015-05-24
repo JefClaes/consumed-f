@@ -45,8 +45,8 @@ module CLIParsing =
 
         let toCommandOrQuery arguments =
             match arguments |> Seq.toList with
-            | [ ( "n", "consume" ); ("id", id ); ("c", category ); ( "d", description ); ( "u", url ) ] ->
-                Success(Command(Consume { Id = id; Category = category; Description = description; Url = url })) 
+            | [ ( "n", "consume" ); ("c", category ); ( "d", description ); ( "u", url ) ] ->
+                Success(Command(Consume { Category = category; Description = description; Url = url })) 
             | [ ( "n", "remove" ); ( "id" , id ) ] ->
                 Success(Command(Remove { Id = id  }))
             | [ ( "n", "list" )] ->

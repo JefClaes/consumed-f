@@ -12,7 +12,7 @@ let ``Handling consume command, consumes item``() =
     let read name = EventStream.NotExists name
     let thetime() = new DateTime(2015, 1, 1)
     let timestamp = thetime()
-    let actual = handle read thetime ( Consume( { Id = "1"; Category = "book"; Description = "SQL Performance Explained"; Url = "http://sqlperfexplained.com" }) )
+    let actual = handle read thetime ( Consume( { Category = "book"; Description = "SQL Performance Explained"; Url = "http://sqlperfexplained.com" }) )
     match actual with
     | Success ( Event ( "consumeditem/1", Event.Consumed
         {

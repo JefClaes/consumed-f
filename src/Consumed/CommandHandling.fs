@@ -28,9 +28,8 @@ module CommandHandling =
     let validate cmd =
         match cmd with
         | Consume data -> 
-            (
-                if data.Id = "" then validationFails(ArgumentEmpty("id"))
-                else if data.Category = "" then validationFails(ArgumentEmpty("category"))
+            (                
+                if data.Category = "" then validationFails(ArgumentEmpty("category"))
                 else if data.Description = "" then validationFails(ArgumentEmpty("description"))
                 else if data.Url = "" then validationFails(ArgumentEmpty("url"))
                 else if not ( [| "book"; "movie" |] |> Seq.exists (fun x -> x.Equals(data.Category, StringComparison.OrdinalIgnoreCase) ) ) then validationFails(ArgumentOutOfRange("category"))         
@@ -45,16 +44,18 @@ module CommandHandling =
     
     let thetime() = DateTime.UtcNow
    
-    let handle read thetime cmd =
+    let handle read ( thetime : unit -> DateTime ) cmd =
         match cmd with
         | Command.Consume data ->
-            let stream = sprintf "consumeditem/%s" data.Id
+            let time = thetime()
+            let id = time.ToString("ddMMyyyyHHmmss")
+            let stream = sprintf "consumeditem/%s" id
 
             match read stream with
             | EventStream.Exists _ ->
                 commandFails ItemAlreadyConsumed
             | EventStream.NotExists stream -> 
-                succeeds ( Event ( stream, Consumed { Timestamp = thetime(); Id = data.Id; Category = data.Category; Description = data.Description; Url = data.Url } ) )
+                succeeds ( Event ( stream, Consumed { Timestamp = time; Id = id; Category = data.Category; Description = data.Description; Url = data.Url } ) )
         | Command.Remove data ->
             let stream = sprintf "consumeditem/%s" data.Id
 

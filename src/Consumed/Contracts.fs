@@ -7,7 +7,7 @@ module Contracts =
     type Command =
         | Consume of data : ConsumeData
         | Remove of data : RemoveData
-    and ConsumeData =  { Id : string; Category : string; Description : string; Url : string }
+    and ConsumeData =  { Category : string; Description : string; Url : string }
     and RemoveData = { Id : string; }
 
     type Query = | List
